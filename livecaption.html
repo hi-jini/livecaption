@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LiveCaption | 실시간 수업 자막</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif}header{background:white;border-bottom:1px solid #e5eaf2;padding:18px max(20px,calc((100% - 1000px)/2));display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:21px;color:#2458c5}.status{font-size:13px;color:#64748b}main{max-width:1000px;margin:32px auto;padding:0 18px}.intro{margin-bottom:22px}.intro small{color:#2563eb;font-weight:750;letter-spacing:.08em}.intro h1{font-size:clamp(26px,4vw,36px);margin:8px 0}.intro p,.muted{color:#64748b;line-height:1.6}.grid{display:grid;grid-template-columns: minmax(0,1.7fr) minmax(260px,1fr);gap:18px}.card{background:white;border:1px solid #e5eaf2;border-radius:18px;padding:22px;margin-bottom:18px}.card h2{font-size:19px;margin:0 0 15px}.live{background:#f6f8ff;border:1px solid #e2eaff;border-radius:14px;min-height:235px;padding:22px;margin:15px 0}.caption{font-size:clamp(24px,4vw,35px);font-weight:650;line-height:1.65;overflow-wrap:anywhere}.interim{color:#2563eb;font-size:20px;line-height:1.6}.row{display:flex;flex-wrap:wrap;gap:9px}.btn{border:1px solid #d7dfec;background:white;color:#273449;padding:11px 15px;border-radius:10px;font-weight:700;cursor:pointer}.btn.primary{background:#2563eb;color:white;border-color:#2563eb}.btn:disabled{opacity:.45;cursor:not-allowed}label{font-size:13px;color:#64748b;display:block;margin:10px 0 6px}input{width:100%;padding:11px;border:1px solid #d7dfec;border-radius:10px;font:inherit}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.stat{background:#f7f9fc;padding:13px;border-radius:11px}.stat b{display:block;font-size:23px;margin-top:5px}.captionline{padding:13px 0;border-bottom:1px solid #edf0f5;line-height:1.7;overflow-wrap:anywhere}.notice{font-size:12px;color:#64748b;line-height:1.6;margin-top:14px}.student{display:none}.student .caption{font-size:clamp(25px,5vw,40px)}.summary{white-space:pre-wrap;line-height:1.8}.footer{text-align:center;color:#94a3b8;font-size:12px;padding:22px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}main{margin:22px auto}.card{padding:17px}header{padding:15px 18px}}
+</style>
+</head>
+<body>
+<header><div class="brand">▣ LiveCaption</div><div class="status" id="status">● 대기 중</div></header>
+<main>
+<section id="presenter">
+<div class="intro"><small>CLASSROOM · LIVE TRANSCRIPTION</small><h1>발표 내용을 놓치지 않도록</h1><p>말하는 순간, 글자가 됩니다.</p></div>
+<div class="grid"><div>
+<div class="card"><h2>실시간 자막 <span style="font-size:12px;color:#2563eb">한국어 · KO</span></h2>
+<div class="live"><div class="muted" id="liveLabel">발표를 시작하면 자막이 여기에 표시됩니다.</div><div class="caption" id="last">마이크를 켜고 발표를 시작해 보세요.</div><div class="interim" id="interim"></div></div>
+<div class="row"><button class="btn primary" id="start">▶ 발표 시작</button><button class="btn" id="stop" disabled>■ 발표 종료</button><button class="btn" id="clear">기록 초기화</button></div><p class="notice" id="notice">마이크 권한을 허용해 주세요. 음성 인식은 지원 브라우저와 HTTPS 환경에서 작동합니다.</p></div>
+<div class="card"><h2>전체 자막 기록 <span class="muted" id="lineCount" style="font-size:12px">0개 문장</span></h2><div id="transcript" class="muted">아직 기록된 내용이 없습니다.</div></div>
+<div class="card" id="summaryBox" style="display:none"><h2>발표 핵심 내용</h2><div class="summary" id="summary"></div><button class="btn" id="summarySave" style="margin-top:12px">요약 TXT 저장</button></div>
+</div>
+<aside>
+<div class="card"><h2>발표 정보</h2><label for="title">수업 / 발표 제목</label><input id="title" value="오늘의 수업" maxlength="100"><div class="stats"><div class="stat"><span class="muted">발표 시간</span><b id="elapsed">00:00</b></div><div class="stat"><span class="muted">인식한 글자</span><b id="count">0</b></div></div></div>
+<div class="card"><h2>수업 기록 저장</h2><p class="muted">자막을 텍스트 파일로 저장하거나 복사할 수 있습니다.</p><div class="row"><button class="btn primary" id="download">↓ 자막 TXT 저장</button><button class="btn" id="copy">전체 자막 복사</button><button class="btn" id="summarize">✦ 발표 내용 요약</button></div></div>
+<div class="card"><h2>학생과 함께 보기</h2><p class="muted">학생 화면 미리보기입니다. 다른 휴대폰과 실시간으로 자막을 공유하려면 별도의 서버 연결이 필요합니다.</p><button class="btn primary" id="studentBtn">학생 화면 미리보기</button></div>
+</aside></div></section>
+<section id="student" class="student"><div class="row" style="justify-content:space-between;margin-bottom:20px"><button class="btn" id="back">← 발표자 화면</button><span class="muted">LIVE CAPTIONS</span></div><div class="card" style="min-height:65vh"><div class="muted" id="studentState">발표 대기 중</div><h1 id="studentTitle">오늘의 수업</h1><div class="caption" id="studentText">발표가 시작되면 자막이 표시됩니다.</div><div class="interim" id="studentInterim"></div></div></section>
+<div class="footer">LiveCaption · 수업 참여와 이해를 돕는 도구</div>
+</main>
+<script>
+(()=>{const $=id=>document.getElementById(id);let rec=null,running=false,lines=[],temp='',started=0,base=0,timer=null,summary='';
+function all(){return lines.join('\n')}function time(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function save(name,txt){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+txt],{type:'text/plain;charset=utf-8'}));a.download=name.replace(/[\\/:*?"<>|]/g,'_');a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function render(){let t=all();$('count').textContent=t.replace(/\s/g,'').length.toLocaleString();$('lineCount').textContent=lines.length+'개 문장';$('transcript').textContent=t||'아직 기록된 내용이 없습니다.';$('transcript').className=t?'':'muted';$('last').textContent=lines.length?lines[lines.length-1]:'마이크를 켜고 발표를 시작해 보세요.';$('interim').textContent=temp;$('studentText').textContent=t||'발표가 시작되면 자막이 표시됩니다.';$('studentInterim').textContent=temp;$('studentTitle').textContent=$('title').value||'수업 자막'}
+function tick(){$('elapsed').textContent=time(base+(running?(Date.now()-started)/1000:0))}
+function finish(){if(running)base+=(Date.now()-started)/1000;running=false;temp='';clearInterval(timer);timer=null;$('start').disabled=false;$('stop').disabled=true;$('status').textContent='● 발표 종료';$('liveLabel').textContent='발표가 종료되었습니다.';$('studentState').textContent='발표 종료';$('notice').textContent='자막을 저장하거나 요약할 수 있습니다.';render();tick()}
+$('start').onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('notice').textContent='이 브라우저는 음성 인식을 지원하지 않습니다. 최신 Chrome 브라우저를 사용해 주세요.';return}if(running)return;try{rec=new SR();rec.lang='ko-KR';rec.continuous=true;rec.interimResults=true;rec.onstart=()=>{running=true;started=Date.now();$('start').disabled=true;$('stop').disabled=false;$('status').textContent='● 음성 인식 중';$('liveLabel').textContent='음성을 듣고 있습니다.';$('studentState').textContent='발표 진행 중 · 실시간 자막';$('notice').textContent='말하는 내용이 자막으로 변환됩니다.';if(!timer)timer=setInterval(tick,500)};rec.onresult=e=>{temp='';for(let i=e.resultIndex;i<e.results.length;i++){let s=e.results[i][0].transcript.trim();if(e.results[i].isFinal&&s)lines.push(s);else if(s)temp+=s}render()};rec.onerror=e=>{if(['not-allowed','service-not-allowed'].includes(e.error)){$('notice').textContent='브라우저 설정에서 마이크 권한을 허용해 주세요.';finish()}};rec.onend=()=>{if(running)try{rec.start()}catch(e){}};rec.start()}catch(e){$('notice').textContent='시작할 수 없습니다. HTTPS 연결과 마이크 권한을 확인해 주세요.'}};
+$('stop').onclick=()=>{if(rec){running=false;rec.onend=null;try{rec.stop()}catch(e){}}finish()};
+$('clear').onclick=()=>{if(running){alert('먼저 발표를 종료해 주세요.');return}if(confirm('자막 기록을 모두 지울까요?')){lines=[];temp='';base=0;summary='';$('elapsed').textContent='00:00';$('summaryBox').style.display='none';render()}};
+$('download').onclick=()=>lines.length?save(($('title').value||'수업기록')+'.txt',($('title').value||'수업 기록')+'\n\n'+all()):alert('저장할 자막이 없습니다.');
+$('copy').onclick=async()=>{if(!lines.length)return alert('복사할 자막이 없습니다.');try{await navigator.clipboard.writeText(all());alert('전체 자막을 복사했습니다.')}catch(e){alert('복사가 제한되어 있습니다. TXT 저장을 이용해 주세요.')}};
+$('summarize').onclick=()=>{if(!lines.length)return alert('요약할 내용이 없습니다.');let freq={};(all().match(/[가-힣]{2,}|[A-Za-z0-9]+/g)||[]).forEach(w=>freq[w]=(freq[w]||0)+1);let ranked=lines.map((s,i)=>({s,i,score:(s.match(/[가-힣]{2,}|[A-Za-z0-9]+/g)||[]).reduce((n,w)=>n+(freq[w]||0),0)/Math.max(1,s.length)*Math.min(s.length,100)})).sort((a,b)=>b.score-a.score).slice(0,Math.min(5,lines.length)).sort((a,b)=>a.i-b.i);summary='['+($('title').value||'발표 요약')+']\n\n핵심 문장\n'+ranked.map(x=>'• '+x.s).join('\n')+'\n\n※ 자주 등장한 단어를 바탕으로 추출한 요약 초안입니다. 생성형 AI가 의미를 분석한 요약은 아닙니다.';$('summary').textContent=summary;$('summaryBox').style.display='block'};
+$('summarySave').onclick=()=>save(($('title').value||'발표요약')+'_요약.txt',summary);
+$('title').oninput=render;$('studentBtn').onclick=()=>{$('presenter').style.display='none';$('student').style.display='block';window.scrollTo(0,0)};$('back').onclick=()=>{$('student').style.display='none';$('presenter').style.display='block';window.scrollTo(0,0)};render();
+})();
+</script>
+</body></html>
